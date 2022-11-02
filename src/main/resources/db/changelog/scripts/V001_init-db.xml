@@ -14,8 +14,8 @@
       <column name="merchant_name" type="varchar(255)"/>
       <column name="merchant_adress" type="varchar(255)"/>
       <column name="email" type="varchar(255)"/>
-      <column name="created_date" type="timestamp"/>
-      <column name="modified_date" type="timestamp"/>
+      <column name="created_date" type="timestamptz"/>
+      <column name="modified_date" type="timestamptz"/>
     </createTable>
     <addNotNullConstraint tableName="test_merchant" columnName="merchant_id" />
     <addUniqueConstraint tableName="test_merchant" columnNames="merchant_id"/>
@@ -29,8 +29,8 @@
       <column name="merchant_id" type="bigint"/>
       <column name="amount" type="bigint"/>
       <column name="transaction_type" type="varchar(255)"/>
-      <column name="created_date" type="timestamp"/>
-      <column name="modified_date" type="timestamp"/>
+      <column name="created_date" type="timestamptz"/>
+      <column name="modified_date" type="timestamptz"/>
     </createTable>
 
     <addNotNullConstraint tableName="test_transaction" columnName="transaction_id" />

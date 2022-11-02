@@ -18,7 +18,7 @@ public final class RandomUtils {
 
   private static final Random rand = new SecureRandom();
 
-  public static int nextInd(int bound) {
+  public static int nextInt(int bound) {
     return rand.nextInt(bound);
   }
 

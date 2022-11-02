@@ -23,8 +23,6 @@ import org.springframework.stereotype.Component;
 @Transactional
 public class InitTestData {
 
-  private static final String INSERT_DATA_MESSAGE_PATTERN = "Updated Report Mapping test data with new report_id: {} for report_permission: {} ";
-
   private final MerchantRepository merchantRepository;
   private final TransactionRepository transactionRepository;
 
@@ -64,15 +62,18 @@ public class InitTestData {
 
   private void initTestTransaction() {
     for (MerchantEntity merchant : merchantEntities) {
+      long wantedTransactionRecordNumberOfMerchant = 5000;
+
       Long merchantTransactions = transactionRepository.countAllTransactionOfMerchant(merchant.getId());
       long numberOfNewTransactions = merchantTransactions != null ? merchantTransactions : 0;
-      if (numberOfNewTransactions < 2000) {
+
+      if (numberOfNewTransactions < wantedTransactionRecordNumberOfMerchant) {
         List<TransactionEntity> newTransactionOfMerchant = new ArrayList<>();
-        for (int i = 0; i < 2000 - numberOfNewTransactions; i++) {
+        for (int i = 0; i < wantedTransactionRecordNumberOfMerchant - numberOfNewTransactions; i++) {
           newTransactionOfMerchant.add(TransactionEntity.builder()
               .transactionId(RandomUtils.randomStringUUID())
               .merchantEntity(merchant)
-              .amount(RandomUtils.nextLong())
+              .amount((long) RandomUtils.nextInt(10000))
               .transactionType(TransactionType.getRandom())
               .build());
         }
@@ -80,6 +81,5 @@ public class InitTestData {
         log.info("Inserted: {} transaction of merchantId: {} ", savedTransactions.size(), merchant.getMerchantId());
       }
     }
-
   }
 }

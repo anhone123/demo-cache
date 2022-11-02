@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.auditing.DateTimeProvider;
@@ -22,7 +21,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ConfigurationPropertiesScan({"cache.demo.config"})
 @EnableJpaAuditing(dateTimeProviderRef = "auditingDateTimeProvider")
 @Slf4j
-//@EnableCaching
 @RequiredArgsConstructor
 public class DemoCacheApplication {
 
@@ -31,14 +29,6 @@ public class DemoCacheApplication {
   public static void main(String[] args) {
     SpringApplication.run(DemoCacheApplication.class, args);
   }
-
-//  @Bean
-//  public RedisCacheConfiguration cacheConfiguration() {
-//    return RedisCacheConfiguration.defaultCacheConfig()
-//        .entryTtl(Duration.ofMinutes(60))
-//        .disableCachingNullValues()
-//        .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-//  }
 
   @Bean // Makes ZonedDateTime compatible with auditing fields
   public DateTimeProvider auditingDateTimeProvider() {
