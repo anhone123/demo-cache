@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog ../dbchangelog-4.2.xsd">
+
+  <property name="application_user" value="application"/>
+
+  <changeSet id="post-migration-1" author="IBT-1106" dbms="postgresql" runAlways="true">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">
+        SELECT count(*) FROM pg_roles WHERE rolname='${application_user}'
+      </sqlCheck>
+    </preConditions>
+    <comment>if exists application user then grant permission for all table with prefix ${schema.table-prefix}</comment>
+    <sql endDelimiter="$$">
+      DO $$
+      BEGIN
+      EXECUTE (
+      SELECT 'GRANT SELECT, INSERT, UPDATE ON TABLE '
+      || string_agg (format ('%I.%I', table_schema, table_name), ',')
+      || ' TO ${application_user}'
+      FROM information_schema.tables
+      WHERE table_schema = 'public'
+      AND table_name LIKE 'test_%'
+      );
+      END $$;
+      GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${application_user};
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

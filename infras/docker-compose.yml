@@ -1,0 +1,26 @@
+version: '3'
+services:
+  demo-cache-database:
+    image: postgres:12
+    environment:
+      POSTGRES_PASSWORD: SpPassW0
+      POSTGRES_USER: superuser
+      POSTGRES_DB: demo_cache_database
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "15555:5432"
+
+  redis-cache:
+    image: redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+#    entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
+    networks:
+      - default
+    ports:
+      - "6543:6379"
+    volumes:
+      - ./redis.cache.data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro

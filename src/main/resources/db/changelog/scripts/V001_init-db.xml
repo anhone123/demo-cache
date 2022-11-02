@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog ../dbchangelog-4.2.xsd">
+
+  <changeSet id="init-db" author="anho">
+
+    <createTable tableName="test_merchant">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="merchant_id" type="varchar(255)"/>
+      <column name="merchant_name" type="varchar(255)"/>
+      <column name="merchant_adress" type="varchar(255)"/>
+      <column name="email" type="varchar(255)"/>
+      <column name="created_date" type="timestamp"/>
+      <column name="modified_date" type="timestamp"/>
+    </createTable>
+    <addNotNullConstraint tableName="test_merchant" columnName="merchant_id" />
+    <addUniqueConstraint tableName="test_merchant" columnNames="merchant_id"/>
+
+
+    <createTable tableName="test_transaction">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="transaction_id" type="varchar(255)"/>
+      <column name="merchant_id" type="bigint"/>
+      <column name="amount" type="bigint"/>
+      <column name="transaction_type" type="varchar(255)"/>
+      <column name="created_date" type="timestamp"/>
+      <column name="modified_date" type="timestamp"/>
+    </createTable>
+
+    <addNotNullConstraint tableName="test_transaction" columnName="transaction_id" />
+    <addNotNullConstraint tableName="test_transaction" columnName="merchant_id" />
+
+    <addForeignKeyConstraint
+      baseTableName="test_transaction"
+      constraintName="test_transaction_merchant_id_fkey"
+      baseColumnNames="merchant_id"
+      referencedTableName="test_merchant"
+      referencedColumnNames="id"
+    />
+  </changeSet>
+
+</databaseChangeLog>
