@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 public class RedisExample implements CommandLineRunner {
 
   private final RedisTemplate<String, String> myRedisTemplate;
-//  private final RedisTemplate myRedisTemplate2;
 
   @Qualifier("minorRedisCacheManager")
   @Autowired // NOT recomment
@@ -36,11 +35,10 @@ public class RedisExample implements CommandLineRunner {
 
     myRedisTemplate.expire(REDIS_TEMPLATE_STATUS_KEY, 10, TimeUnit.SECONDS);
     log.info(EXPIRE_TIME, REDIS_TEMPLATE_STATUS_KEY, myRedisTemplate.getExpire(REDIS_TEMPLATE_STATUS_KEY, TimeUnit.SECONDS));
-
-    // Cache list của RedisCacheManager
-    log.info(CACHES_OF_CACHEMANAGER_TEMPLATE, redisCacheManager.getClass().getName(), redisCacheManager.getCacheNames());
-    redisCacheManager.getCache(MINOR_REDIS_CACHEMANAGER_CACHE_1).put("Key1", "value1");
-    log.info(MINOR_REDIS_CACHEMANAGER_CACHE_1 + ", value = " + redisCacheManager.getCache(MINOR_REDIS_CACHEMANAGER_CACHE_1).get("Key1").get().toString());
+//
+//    log.info(CACHES_OF_CACHEMANAGER_TEMPLATE, redisCacheManager.getClass().getName(), redisCacheManager.getCacheNames());
+//    redisCacheManager.getCache(MINOR_REDIS_CACHEMANAGER_CACHE_1).put("Key1", "value1");
+//    log.info(MINOR_REDIS_CACHEMANAGER_CACHE_1 + ", value = " + redisCacheManager.getCache(MINOR_REDIS_CACHEMANAGER_CACHE_1).get("Key1").get().toString());
 
 
   }
