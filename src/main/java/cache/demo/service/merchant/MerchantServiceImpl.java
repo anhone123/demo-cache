@@ -6,6 +6,7 @@ import cache.demo.config.ApplicationPropertiesConfig;
 import cache.demo.constains.CacheNames;
 import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayload;
 import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayload.TransactionInfo;
+import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayloadEntity;
 import cache.demo.entities.MerchantEntity;
 import cache.demo.entities.TransactionEntity;
 import cache.demo.exceptions.MerchantNotFoundException;
@@ -70,6 +71,17 @@ public class MerchantServiceImpl implements MerchantService {
     return GetMerchantTransactionsResponsePayload.builder()
         .totalTransaction(transactions.size())
         .transactions(mapTransactionEntitiesToTransactionInfos(transactions))
+        .build();
+  }
+
+//  @Cacheable(value = CacheNames.CACHE_ALL_TRANSACTIONS_OF_ALL_MERCHANTS, cacheManager = "mainRedisCacheManager")
+  public GetMerchantTransactionsResponsePayloadEntity getAllTransactionsOfAllMerchantsENTITY() {
+
+    final List<TransactionEntity> transactions = transactionRepository.findTransactionEntitiesByForeignMerchantId(null);
+    log.info("Got {} transaction record from DB!", transactions.size());
+    return GetMerchantTransactionsResponsePayloadEntity.builder()
+        .totalTransaction(transactions.size())
+        .transactions(transactions)
         .build();
   }
 

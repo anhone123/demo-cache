@@ -1,6 +1,8 @@
 databaseChangeLog:
   - include:
       file: db/changelog/scripts/V001_init-db.xml
+  - include:
+      file: db/changelog/scripts/V002_add-table-user.xml
 
   - include:
       file: db/changelog/scripts/post-migration.xml

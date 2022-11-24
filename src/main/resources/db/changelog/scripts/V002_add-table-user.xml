@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog ../dbchangelog-4.2.xsd">
+
+  <changeSet id="add-table-user" author="anho">
+
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="test_user"/>
+        <tableExists tableName="test_role"/>
+        <tableExists tableName="test_user_role"/>
+      </not>
+    </preConditions>
+
+    <createTable tableName="test_user">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="user_id" type="varchar(255)"/>
+      <column name="user_password" type="varchar(255)"/>
+      <column name="first_name" type="varchar(255)"/>
+      <column name="last_name" type="varchar(255)"/>
+      <column name="session_token" type="varchar(255)"/>
+      <column name="session_expire_date" type="varchar(255)"/>
+      <column name="email" type="varchar(255)"/>
+      <column name="created_date" type="timestamptz"/>
+      <column name="modified_date" type="timestamptz"/>
+    </createTable>
+
+    <createTable tableName="test_role">
+      <column name="id" type="integer" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="code_name" type="varchar(255)"/>
+      <column name="name" type="varchar(255)"/>
+      <column name="description" type="varchar(255)"/>
+      <column name="created_date" type="timestamptz"/>
+      <column name="modified_date" type="timestamptz"/>
+    </createTable>
+    <addNotNullConstraint tableName="test_role" columnName="code_name"/>
+    <addUniqueConstraint tableName="test_role" columnNames="code_name"/>
+
+    <createTable tableName="test_user_role">
+      <column name="user_id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="role_id" type="integer">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="created_date" type="timestamptz"/>
+      <column name="modified_date" type="timestamptz"/>
+    </createTable>
+    <addForeignKeyConstraint
+      baseTableName="test_user_role"
+      constraintName="test_user_role_user_id_fkey"
+      baseColumnNames="user_id"
+      referencedTableName="test_user"
+      referencedColumnNames="id"/>
+    <addForeignKeyConstraint
+      baseTableName="test_user_role"
+      constraintName="test_user_role_role_id_fkey"
+      baseColumnNames="role_id"
+      referencedTableName="test_role"
+      referencedColumnNames="id"/>
+
+  </changeSet>
+
+</databaseChangeLog>

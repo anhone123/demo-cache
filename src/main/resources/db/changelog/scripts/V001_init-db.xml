@@ -6,6 +6,13 @@
 
   <changeSet id="init-db" author="anho">
 
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="test_merchant"/>
+        <tableExists tableName="test_transaction"/>
+      </not>
+    </preConditions>
+
     <createTable tableName="test_merchant">
       <column name="id" type="bigint" autoIncrement="true">
         <constraints primaryKey="true"/>

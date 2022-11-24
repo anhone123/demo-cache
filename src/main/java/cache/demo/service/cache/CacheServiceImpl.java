@@ -1,4 +1,4 @@
-package cache.demo.service.merchant;
+package cache.demo.service.cache;
 
 import static cache.demo.constains.CacheNames.CACHE_ALL_TRANSACTIONS_OF_ALL_MERCHANTS;
 

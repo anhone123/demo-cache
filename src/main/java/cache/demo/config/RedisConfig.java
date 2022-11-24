@@ -96,7 +96,7 @@ public class RedisConfig {
     // và giới hạn cắn tối đa 4GB ram.
     RedisCacheConfiguration allTransactionsCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
         .disableCachingNullValues()
-        .entryTtl(Duration.ofSeconds(120 ));
+        .entryTtl(Duration.ofSeconds(120));
 
     RedisCacheConfiguration transactionsOfAMerchantCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
         .disableCachingNullValues()

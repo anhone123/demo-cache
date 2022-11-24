@@ -6,7 +6,7 @@
 
   <property name="application_user" value="application"/>
 
-  <changeSet id="post-migration-1" author="IBT-1106" dbms="postgresql" runAlways="true">
+  <changeSet id="post-migration-1" author="anho" dbms="postgresql" runAlways="true">
     <preConditions onFail="MARK_RAN">
       <sqlCheck expectedResult="1">
         SELECT count(*) FROM pg_roles WHERE rolname='${application_user}'
@@ -26,7 +26,7 @@
       );
       END $$;
       GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${application_user};
+--       GRANT CREATE ON SCHEMA public TO ${application_user};
     </sql>
   </changeSet>
-
 </databaseChangeLog>

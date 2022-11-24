@@ -5,7 +5,7 @@ import static cache.demo.constains.CacheNames.ALL_CACHE_STRING_NAMES_SAMPLE;
 import cache.demo.controllers.endpoint.DemoCacheEndpoint;
 import cache.demo.exceptions.ApplicationException;
 import cache.demo.exceptions.CacheNotFoundException;
-import cache.demo.service.merchant.CacheService;
+import cache.demo.service.cache.CacheService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

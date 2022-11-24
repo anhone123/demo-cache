@@ -1,4 +1,4 @@
-package cache.demo.service.merchant;
+package cache.demo.service.cache;
 
 import cache.demo.exceptions.ApplicationException;
 import cache.demo.exceptions.CacheNotFoundException;

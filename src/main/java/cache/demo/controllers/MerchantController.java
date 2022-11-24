@@ -3,6 +3,7 @@ package cache.demo.controllers;
 import cache.demo.controllers.endpoint.DemoCacheEndpoint;
 import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayload;
 import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayload.TransactionInfo;
+import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayloadEntity;
 import cache.demo.exceptions.MerchantNotFoundException;
 import cache.demo.service.merchant.MerchantService;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,15 @@ public class MerchantController {
   public GetMerchantTransactionsResponsePayload getAllTransactionsOfAllMerchants() {
     long start = System.currentTimeMillis();
     GetMerchantTransactionsResponsePayload result = merchantService.getAllTransactionsOfAllMerchants();
+    log.warn("Get transactions of all merchants finished in: {}!", System.currentTimeMillis() - start);
+    return result;
+  }
+
+  @GetMapping(DemoCacheEndpoint.MERCHANT_ALL_TRANSACTIONS + "ENTITY")
+  @ApiOperation(value = "This method is used to get all transactions of all merchants ENTITY.")
+  public GetMerchantTransactionsResponsePayloadEntity getAllTransactionsOfAllMerchantsENTITY() {
+    long start = System.currentTimeMillis();
+    GetMerchantTransactionsResponsePayloadEntity result = merchantService.getAllTransactionsOfAllMerchantsENTITY();
     log.warn("Get transactions of all merchants finished in: {}!", System.currentTimeMillis() - start);
     return result;
   }
