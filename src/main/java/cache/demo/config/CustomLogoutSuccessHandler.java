@@ -1,5 +1,8 @@
 package cache.demo.config;
 
+import static cache.demo.controllers.endpoint.DemoCacheEndpoint.AUTH;
+import static cache.demo.controllers.endpoint.DemoCacheEndpoint.AUTH_LOGOUT_SUCCESS;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -13,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UrlPathHelper;
 
 @Component
 @RequiredArgsConstructor
@@ -20,15 +24,24 @@ import org.springframework.stereotype.Component;
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements
     LogoutSuccessHandler {
 
+  private final UrlPathHelper urlPathHelper;
+
   @Override
   public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
       throws IOException, ServletException {
-    String refererUrl = request.getHeader("Referer");
-    System.out.println("Request cookies:" + Arrays.stream(request.getCookies()).map(Cookie::getName).collect(Collectors.toList()));
-    System.out.println("Request session:" + request.getSession().getId());
-    log.info("logged out with CustomLogoutSuccessHandler! " + refererUrl);
+    log.info("Receive onLogoutSuccess call, sessionId: {}", request.getSession().getId());
+
+    String context = urlPathHelper.getContextPath(request);
+    log.info("Redirect url: {}", context + AUTH + AUTH_LOGOUT_SUCCESS);
+
+    response.sendRedirect(context + AUTH + AUTH_LOGOUT_SUCCESS);
+//    response.sendRedirect("https://www.google.com/");
 
     super.onLogoutSuccess(request, response, authentication);
+
+    log.info("Request cookies: {}. ", Arrays.stream(request.getCookies()).map(Cookie::getName).collect(Collectors.toList()));
+    log.info("logged out then redirected with CustomLogoutSuccessHandler for user {}. ", authentication.getName());
+
   }
 
 }

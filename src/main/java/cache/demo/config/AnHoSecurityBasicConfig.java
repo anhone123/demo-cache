@@ -4,6 +4,7 @@ import static cache.demo.controllers.endpoint.DemoCacheEndpoint.ACCESS_DENIED;
 import static cache.demo.controllers.endpoint.DemoCacheEndpoint.AUTH;
 import static cache.demo.controllers.endpoint.DemoCacheEndpoint.AUTH_LOGIN;
 import static cache.demo.controllers.endpoint.DemoCacheEndpoint.AUTH_LOGOUT;
+import static cache.demo.controllers.endpoint.DemoCacheEndpoint.AUTH_LOGOUT_SPRING;
 import static cache.demo.controllers.endpoint.DemoCacheEndpoint.AUTH_LOGOUT_SUCCESS;
 import static cache.demo.controllers.endpoint.DemoCacheEndpoint.CACHE_MANAGEMENT;
 import static cache.demo.controllers.endpoint.DemoCacheEndpoint.MERCHANT;
@@ -17,9 +18,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
@@ -29,9 +32,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class AnHoSecurityBasicConfig extends WebSecurityConfigurerAdapter {
+  //tuong duong voi config bean SecurityFilterChain
 
   private final DataSource dataSource;
   private final UserDetailsService anhoUserDetailsService;
+  private final CustomLogoutHandler customLogoutHandler;
   private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 //  private final MyBasicAuthenticationEntryPoint basicAuthenticationEntryPoint;
 
@@ -47,7 +52,8 @@ public class AnHoSecurityBasicConfig extends WebSecurityConfigurerAdapter {
     return new BCryptPasswordEncoder();
   }
 
-
+  //modify request/response if request is UNAUTHORIZED
+  //override lai cac method cua BasicAuthenticationEntryPoint la ok nha
   @Bean
   public BasicAuthenticationEntryPoint basicAuthenticationEntryPoint() {
     BasicAuthenticationEntryPoint basicAuthenticationEntryPoint = new BasicAuthenticationEntryPoint();
@@ -55,10 +61,12 @@ public class AnHoSecurityBasicConfig extends WebSecurityConfigurerAdapter {
     return basicAuthenticationEntryPoint;
   }
 
-
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable();
+    http
+        .csrf().disable()
+        .formLogin().disable()
+    ;
 
     // Requests send to the Web Server request must be authenticated
     http.authorizeRequests()
@@ -67,29 +75,37 @@ public class AnHoSecurityBasicConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(CACHE_MANAGEMENT + "/**").authenticated()
         .antMatchers(AUTH + AUTH_LOGOUT + "/**").authenticated()
         .antMatchers(AUTH + AUTH_LOGIN +"/**").permitAll()
+        .antMatchers(AUTH + AUTH_LOGOUT_SUCCESS + "/**").permitAll()
         .antMatchers(ACCESS_DENIED +"/**").permitAll()
 
     ;
-    //add logout handler
-    http.logout()
+    //vao day xem giai thich nha
+    // https://docs.spring.io/spring-security/reference/servlet/authentication/logout.html
+    http
+        .logout()
+        .logoutUrl(AUTH + AUTH_LOGOUT_SPRING)
+        .addLogoutHandler(customLogoutHandler)
+//        .logoutRequestMatcher(new AntPathRequestMatcher(AUTH_LOGOUT_SPRING, "GET"))
+//        .logoutSuccessUrl(AUTH + AUTH_LOGOUT_SUCCESS) // neu config .logoutSuccessHandler(...) thi bypass .logoutSuccessUrl(...)
         .logoutSuccessHandler(customLogoutSuccessHandler)
-        .logoutUrl(AUTH_LOGOUT)
-//        .logoutSuccessUrl("https://www.google.com/")
-//        .invalidateHttpSession(true) // default = true
-//        .deleteCookies("JSESSIONID")
+        .invalidateHttpSession(true) // default = true
+        .deleteCookies("JSESSIONID") //session cookie
     ;
+
+    //return api nay neu trong co quyen truy cap api
     http.exceptionHandling()
         .accessDeniedPage(AUTH + ACCESS_DENIED);
 
     // Use AuthenticationEntryPoint to handle fail authenticate user/password
     // Normally return fail login page, but its more simple for REST-api
+    // override its method to customize
     http.httpBasic()
         .authenticationEntryPoint(basicAuthenticationEntryPoint())
     ;
 
-//    http.rememberMe()
-//        .key("superSecretKey")
-//        .tokenRepository(persistentTokenRepository());
+    http.rememberMe()
+        .key("superSecretKey")
+        .tokenRepository(persistentTokenRepository());
 
 //    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }

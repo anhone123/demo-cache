@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(DemoCacheEndpoint.CACHE_MANAGEMENT)
 @RequiredArgsConstructor
-@Slf4j
+//@PreAuthorize("hasAuthority('ROLE_EDITOR')")      //hasAuthority va hasRole tuong tu nhau, tu spring security version 4
+//@PreAuthorize("hasPermission('ROLE', 'EDITOR')")  // ‘ROLE_‘ prefix auto add vao => hasRole('EDITOR') = hasRole('ROLE_EDITOR')
+@Slf4j                                              //CHU Y: GrantedAuthority phai co prefix 'ROLE_' check moi duoc
+@PreAuthorize("hasPermissionNiNe('PERMISSION_ROLE_EDITOR')")
 public class CacheController {
 
   private final CacheService cacheService;
 
+  @PreAuthorize("hasPermission('ROLE', 'EDITOR')")
   @GetMapping(DemoCacheEndpoint.CACHE_GET)
   @ApiOperation(value = "This method is used to GET value of a cache by key." )
   @ApiResponses(@ApiResponse(description = ALL_CACHE_STRING_NAMES_SAMPLE))

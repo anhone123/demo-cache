@@ -20,8 +20,10 @@ public final class DemoCacheEndpoint {
 
   public static final String AUTH = "/auth-basic";
   public static final String AUTH_LOGIN = "/login";
-  public static final String AUTH_LOGOUT = "/perform_logout";
-  public static final String AUTH_LOGOUT_SUCCESS = AUTH_LOGOUT + "/success";
+  public static final String AUTH_LOGOUT = "/logout";
+  public static final String AUTH_LOGOUT_MANUAL = AUTH_LOGOUT + "/manual";
+  public static final String AUTH_LOGOUT_SPRING = AUTH_LOGOUT + "/spring";
+  public static final String AUTH_LOGOUT_SUCCESS = "/logout_success";
 
   public static final String ACCESS_DENIED = "/access-denied";
 

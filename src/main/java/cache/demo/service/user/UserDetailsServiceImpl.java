@@ -25,6 +25,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   private final UserRepository userRepository;
 
+  private static final String ROLE_PREFIX = "ROLE_";
+  private static final String PERMISSION_PREFIX = "PERMISSION_";
+
+
   @Override
   public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
@@ -39,7 +43,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     Set<RoleEntity> roles = userEntity.getRoles();
 
     List<GrantedAuthority> grantedAuthorityList = roles.stream()
-        .map(role -> new SimpleGrantedAuthority(role.getCodeName()))
+        .map(role -> new SimpleGrantedAuthority(PERMISSION_PREFIX + ROLE_PREFIX + role.getCodeName()))
         .collect(Collectors.toList());
 
     UserDetails userDetails = new User(userEntity.getUserId(), userEntity.getUserPassword(), grantedAuthorityList);
