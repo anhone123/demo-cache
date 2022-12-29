@@ -1,10 +1,16 @@
 package cache.demo.config;
 
+import static cache.demo.config.PermissionUtil.permissionToAuthority;
+
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
+
+/**
+ * https://www.baeldung.com/spring-security-create-new-custom-security-expression
+ */
 
 /**
  * Re-implementation of Spring's MethodSecurityExpressionRoot. Would have liked
@@ -67,12 +73,15 @@ public class CustomMethodSecurityExpressionRoot
     this.target = target;
   }
 
+  /**
+   * Create custom permission security check
+   */
   public boolean hasPermissionNiNe(String permission) {
     log.info("Method security check for permission: {}", permission);
     if (null == permission || permission.isBlank()) {
       return false;
     }
-    return hasAuthority(PermissionUtil.permissionToAuthority(permission));
+    return hasAuthority(permissionToAuthority(permission));
   }
 
   public boolean coPermissionNaoCungDuocNe(String... permissions) {
@@ -85,6 +94,27 @@ public class CustomMethodSecurityExpressionRoot
             .toArray(String[]::new)
     );
   }
+
+  /**
+   * hasPermission(), hasAnyPermission() can be overriden here, for example
+   */
+//  public boolean hasPermission(String permission) {
+//    if (null == permission || permission.isBlank()) {
+//      return false;
+//    }
+//    return hasAuthority(permissionToAuthority(permission));
+//  }
+//
+//  public boolean hasAnyPermission(String... permissions) {
+//    if (null == permissions) {
+//      return false;
+//    }
+//    return hasAnyAuthority(
+//        Arrays.stream(permissions)
+//            .map(PermissionUtil::permissionToAuthority)
+//            .toArray(String[]::new)
+//    );
+//  }
 
   /**
    * create method expression to check if the principal is a member of a Organization or a Group by id

@@ -41,7 +41,6 @@ public class InitTestData {
   private static final String ROLE_VIEWER = "VIEWER";
   private static final String ROLE_EDIOR = "EDITOR";
 
-
   private final RoleRepository roleRepository;
   private final UserRepository userRepository;
   private final UserRoleRepository userRoleRepository;

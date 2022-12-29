@@ -19,4 +19,7 @@ docker-compose pull
 docker-compose up -d
 ```
 
+Run application with "test" or "local" profile for test data.
+Checkout InitTestData.java
+
 Default swagger ui: http://localhost:1234/swagger-ui/#/

@@ -28,13 +28,17 @@ public class RedisExample implements CommandLineRunner {
   public static final String CACHES_OF_CACHEMANAGER_TEMPLATE = "Caches of [{}] = {}.";
 
   @Override
-  public void run(String... args) {
+  public void run(String... args) throws InterruptedException {
     // Set giá trị của REDIS_TEMPLATE_STATUS_KEY là "success"
     myRedisTemplate.opsForValue().set(REDIS_TEMPLATE_STATUS_KEY,"success");
     log.info(REDIS_TEMPLATE_STATUS_KEY + ": [{}]", myRedisTemplate.opsForValue().get(REDIS_TEMPLATE_STATUS_KEY));
 
     myRedisTemplate.expire(REDIS_TEMPLATE_STATUS_KEY, 10, TimeUnit.SECONDS);
     log.info(EXPIRE_TIME, REDIS_TEMPLATE_STATUS_KEY, myRedisTemplate.getExpire(REDIS_TEMPLATE_STATUS_KEY, TimeUnit.SECONDS));
+
+    Thread.sleep(10000);
+    log.info(REDIS_TEMPLATE_STATUS_KEY + ": [{}]", myRedisTemplate.opsForValue().get(REDIS_TEMPLATE_STATUS_KEY));
+
 //
 //    log.info(CACHES_OF_CACHEMANAGER_TEMPLATE, redisCacheManager.getClass().getName(), redisCacheManager.getCacheNames());
 //    redisCacheManager.getCache(MINOR_REDIS_CACHEMANAGER_CACHE_1).put("Key1", "value1");

@@ -33,13 +33,14 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
 
     String context = urlPathHelper.getContextPath(request);
     log.info("Redirect url: {}", context + AUTH + AUTH_LOGOUT_SUCCESS);
-
     response.sendRedirect(context + AUTH + AUTH_LOGOUT_SUCCESS);
 //    response.sendRedirect("https://www.google.com/");
 
     super.onLogoutSuccess(request, response, authentication);
 
-    log.info("Request cookies: {}. ", Arrays.stream(request.getCookies()).map(Cookie::getName).collect(Collectors.toList()));
+    log.info("Request cookies: {}. ", Arrays.stream(request.getCookies())
+        .map(Cookie::getName)
+        .collect(Collectors.toList()));
     log.info("logged out then redirected with CustomLogoutSuccessHandler for user {}. ", authentication.getName());
 
   }

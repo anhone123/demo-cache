@@ -65,7 +65,8 @@ public class AnHoSecurityBasicConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http
         .csrf().disable()
-        .formLogin().disable()
+        .formLogin()//default url: domain/login
+//        .loginPage("/login-form")
     ;
 
     // Requests send to the Web Server request must be authenticated
@@ -104,7 +105,11 @@ public class AnHoSecurityBasicConfig extends WebSecurityConfigurerAdapter {
     ;
 
     http.rememberMe()
+        .userDetailsService(anhoUserDetailsService)
         .key("superSecretKey")
+        .rememberMeCookieName("rememberMeCookieName")
+        .rememberMeParameter("rememberMeParameter")
+        .tokenValiditySeconds(60)
         .tokenRepository(persistentTokenRepository());
 
 //    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -130,8 +135,9 @@ public class AnHoSecurityBasicConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public PersistentTokenRepository persistentTokenRepository() {
     JdbcTokenRepositoryImpl db = new JdbcTokenRepositoryImpl();
+
     db.setDataSource(dataSource);
-//    db.setCreateTableOnStartup(true);
+//    db.setCreateTableOnStartup(true); //Nen tao bang liquibase
     return db;
   }
 

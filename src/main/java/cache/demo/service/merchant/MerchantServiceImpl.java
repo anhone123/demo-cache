@@ -10,8 +10,11 @@ import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayloadEntity;
 import cache.demo.entities.MerchantEntity;
 import cache.demo.entities.TransactionEntity;
 import cache.demo.exceptions.MerchantNotFoundException;
+import cache.demo.exceptions.errorDetail.ErrorCode;
+import cache.demo.exceptions.errorDetail.ErrorMessage;
 import cache.demo.repository.MerchantRepository;
 import cache.demo.repository.TransactionRepository;
+import cache.demo.service.locale.LocaleService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +37,9 @@ public class MerchantServiceImpl implements MerchantService {
 
   private final MerchantRepository merchantRepository;
   private final TransactionRepository transactionRepository;
+  private final LocaleService localeService;
 
-  @Qualifier("minorRedisCacheManager")
+//  @Qualifier("minorRedisCacheManager")
   @Autowired // NOT recommend
   private final RedisCacheManager minorRedisCacheManager;
 
@@ -51,7 +55,8 @@ public class MerchantServiceImpl implements MerchantService {
   public GetMerchantTransactionsResponsePayload getTransactionsOfMerchant(String merchantId)
       throws MerchantNotFoundException {
     MerchantEntity existedMerchant = merchantRepository.findMerchantEntityByMerchantId(merchantId)
-        .orElseThrow(MerchantNotFoundException::new);
+        .orElseThrow(() -> new MerchantNotFoundException(ErrorCode.MERCHANT_NOT_FOUND,
+            localeService.generateInternationalErrorMessage(ErrorMessage.MERCHANT_NOT_FOUND_INTERNATIONAL_CODE)));
 
     List<TransactionEntity> transactions = transactionRepository.findTransactionEntitiesByForeignMerchantId(
         existedMerchant.getId());
@@ -110,7 +115,8 @@ public class MerchantServiceImpl implements MerchantService {
   public GetMerchantTransactionsResponsePayload putMerchantTransactionsCache(String merchantId)
       throws MerchantNotFoundException {
     merchantRepository.findMerchantEntityByMerchantId(merchantId)
-        .orElseThrow(MerchantNotFoundException::new);
+        .orElseThrow(() -> new MerchantNotFoundException(ErrorCode.MERCHANT_NOT_FOUND,
+            localeService.generateInternationalErrorMessage(ErrorMessage.MERCHANT_NOT_FOUND_INTERNATIONAL_CODE)));
 
     List<TransactionInfo> transactions = List.of(TransactionInfo.builder()
             .id(123456789L)
@@ -152,7 +158,7 @@ public class MerchantServiceImpl implements MerchantService {
   }
 
   // KHÔNG args và có thể có return value (recomment là k nên)
-  @Scheduled(fixedRateString = "180000", initialDelay = 180000)
+//  @Scheduled(fixedRateString = "180000", initialDelay = 180000)
   public void putAllMerchantTransactionsCacheSchedule() {
     getAllTransactionsOfAllMerchants();
     log.warn("All transactions of all merchants cache updated with schedule");

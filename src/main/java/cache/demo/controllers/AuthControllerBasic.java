@@ -8,6 +8,7 @@ import cache.demo.dto.user.UserLogInResponse;
 import io.swagger.annotations.ApiOperation;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +21,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -42,9 +42,9 @@ public class AuthControllerBasic {
 
   @PostMapping(DemoCacheEndpoint.AUTH_LOGIN)
   @ApiOperation(value = "This method is used to login a user with userId and userPassword." )
-  public ResponseEntity<UserLogInResponse> logIn(HttpServletRequest request,
-      HttpServletResponse response,
+  public ResponseEntity<UserLogInResponse> logIn(HttpServletRequest request, HttpServletResponse response,
       @RequestBody UserLogInRequest userLogInRequest) {
+
     log.info("Receive login request for user: {}", userLogInRequest.getUserId());
     Authentication authentication;
     UserDetails userDetails = userDetailsService.loadUserByUsername(userLogInRequest.getUserId());
@@ -75,24 +75,36 @@ public class AuthControllerBasic {
   @ApiOperation(value = "This method is used to logout a user with session and manual way." )
   public ResponseEntity<LogOutResponse> manualLogout(
       HttpServletRequest request, HttpServletResponse response) {
-    log.info("Receive logout request for sessionId: {}", request.getSession().getId());
-    HttpSession session = request.getSession(false); //co the truyen HttpSession tu method param
-    session.invalidate();
 
-    Optional<Cookie> sessionCookie = Arrays.stream(request.getCookies())
+    HttpSession session = request.getSession(); //co the truyen HttpSession tu method param
+    String sessionId = session.getId();
+    log.info("Receive logout request for sessionId: {}", session.getId());
+
+    // Server MUST invalidate session. invalidate cookie is optional.
+    session.invalidate();
+    log.info("Session invalidated for sessionId: {}", session.getId());
+
+    Cookie[] requestCookies = request.getCookies();
+//    log.info("Request's cookies names: {}", Arrays.stream(requestCookies).map(Cookie::getName).collect(Collectors.toList()));
+//    log.info("Request's cookies values: {}", Arrays.stream(requestCookies).map(Cookie::getValue).collect(Collectors.toList()));
+
+    Optional<Cookie> sessionCookieOptional = Arrays.stream(requestCookies)
         .filter(cookie -> cookie.getName().equals("JSESSIONID"))
         .findFirst();
 
-    if (sessionCookie.isPresent()) {
-      sessionCookie.get().setMaxAge(0);//cookie value still there
-      log.info("Removed JSESSIONID cookie!");
-      response.addCookie(sessionCookie.get());
+    if (sessionCookieOptional.isPresent()) {
+      Cookie sessionCookie = sessionCookieOptional.get();
+      log.info("Cookie JSESSIONID=" + sessionCookie.getValue());
+      sessionCookie.setMaxAge(0);//cookie value still there
+      sessionCookie.setValue("");
+      log.info("Removed JSESSIONID cookie! (setMaxAge(0))");
+      response.addCookie(sessionCookie);
     }
 
     log.info("Response's headers: " + response.getHeaderNames());
 
     return new ResponseEntity(LogOutResponse.builder()
-        .description(String.format("You have been logged out from sessionId: %s", session.getId()))
+        .description(String.format("You have been logged out from sessionId: %s", sessionId))
         .build(),
         HttpStatus.OK);
   }
@@ -100,7 +112,7 @@ public class AuthControllerBasic {
   @GetMapping(DemoCacheEndpoint.AUTH_LOGOUT_SUCCESS)
   @ApiOperation(value = "This method is used to show description after logout." )
   public ResponseEntity<LogOutResponse> logoutSuccess() {
-    log.info("logged out ne");
+    log.info("logout-success-api called");
     return new ResponseEntity(LogOutResponse.builder()
         .description("You have been logged out!")
         .build(),

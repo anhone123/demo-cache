@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationTrustResolverIm
 import org.springframework.security.core.Authentication;
 
 public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler {
+
   private AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
 
   @Override
