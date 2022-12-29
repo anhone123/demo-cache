@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DemoCacheEndpoint {
 
+  public static final String INTERNATIONALIZATION = "/internationalization";
+
   public static final String MERCHANT = "/merchant";
   public static final String MERCHANT_TRANSACTIONS = "/transactions";
   public static final String MERCHANT_ALL_TRANSACTIONS = "/all-transactions";

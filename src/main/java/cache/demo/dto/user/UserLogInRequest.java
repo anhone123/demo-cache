@@ -16,5 +16,6 @@ public class UserLogInRequest implements Serializable {
 
   private String userId;
   private String userPassword;
+  private boolean rememberMeParameter;
 
 }

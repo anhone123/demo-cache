@@ -100,7 +100,7 @@ public class AuthControllerBasic {
   @GetMapping(DemoCacheEndpoint.AUTH_LOGOUT_SUCCESS)
   @ApiOperation(value = "This method is used to show description after logout." )
   public ResponseEntity<LogOutResponse> logoutSuccess() {
-    log.info("logged out ne");
+    log.info("logout-success-api called");
     return new ResponseEntity(LogOutResponse.builder()
         .description("You have been logged out!")
         .build(),

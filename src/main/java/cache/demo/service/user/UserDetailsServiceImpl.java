@@ -47,7 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         .collect(Collectors.toList());
 
     UserDetails userDetails = new User(userEntity.getUserId(), userEntity.getUserPassword(), grantedAuthorityList);
-    log.info("Login successfully for user: {}", userDetails.getUsername());
+    log.info("UserDetail found with userId/userName: {}", userDetails.getUsername());
     return userDetails;
 
   }

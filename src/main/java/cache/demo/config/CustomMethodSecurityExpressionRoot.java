@@ -7,6 +7,10 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.core.Authentication;
 
 /**
+ * https://www.baeldung.com/spring-security-create-new-custom-security-expression
+ */
+
+/**
  * Re-implementation of Spring's MethodSecurityExpressionRoot. Would have liked
  * to extend instead, but alas they declared it as a package class, not public.
  * Their class hasn't changed since 3.0, so it's probably pretty stable.

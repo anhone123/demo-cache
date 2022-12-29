@@ -9,4 +9,8 @@ public class MerchantNotFoundException extends ApplicationException {
     super(ErrorCode.MERCHANT_NOT_FOUND, ErrorMessage.MERCHANT_NOT_FOUND);
   }
 
+  public MerchantNotFoundException(Integer errorCode, String errorMessage) {
+    super(errorCode, errorMessage);
+  }
+
 }

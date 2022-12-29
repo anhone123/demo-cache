@@ -1,16 +1,23 @@
 package cache.demo.controllers;
 
 import cache.demo.controllers.endpoint.DemoCacheEndpoint;
+import cache.demo.dto.merchant.ChildrenResponsePayload;
+import cache.demo.dto.merchant.ChildrenResponsePayload.Children;
 import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayload;
 import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayload.TransactionInfo;
 import cache.demo.dto.merchant.GetMerchantTransactionsResponsePayloadEntity;
 import cache.demo.exceptions.MerchantNotFoundException;
 import cache.demo.service.merchant.MerchantService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +30,36 @@ import org.springframework.web.bind.annotation.RestController;
 public class MerchantController {
 
   private final MerchantService merchantService;
+
+  private final ObjectMapper objectMapper;
+
+  private final ApplicationContext applicationContext;
+
+  @PostMapping("/jsontest")
+  @ApiOperation(value = "This method is used to get transactions of a merchant.")
+  public ChildrenResponsePayload parseChildrenPayload(String payload) {
+    try {
+      System.out.println("hihi:" + applicationContext.getClass());
+      ChildrenResponsePayload childrenResponsePayload = objectMapper.readValue(payload,
+          ChildrenResponsePayload.class);
+
+      log.info("Payload is Children: {}", childrenResponsePayload.getChildren() instanceof Children);
+      log.info("Payload is Object: {}", childrenResponsePayload.getChildren() instanceof Object);
+      log.info("Payload children type: {}", childrenResponsePayload.getChildren().getClass());
+
+      if (childrenResponsePayload.getChildren() instanceof List) {
+        log.info("Payload's children is: {}", childrenResponsePayload.getChildren().getClass().getName());
+
+      }
+//      Children children = (Children) childrenResponsePayload.getChildren();
+//      log.info("children: {}", children);
+
+      return childrenResponsePayload;
+    } catch (JsonProcessingException e) {
+      log.error("Parse json fail!", e);
+      throw new RuntimeException(e.getMessage());
+    }
+  }
 
   @GetMapping(DemoCacheEndpoint.MERCHANT_TRANSACTIONS)
   @ApiOperation(value = "This method is used to get transactions of a merchant.")
