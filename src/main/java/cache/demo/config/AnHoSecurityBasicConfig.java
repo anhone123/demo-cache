@@ -72,6 +72,7 @@ public class AnHoSecurityBasicConfig extends WebSecurityConfigurerAdapter {
     // Requests send to the Web Server request must be authenticated
     http.authorizeRequests()
 //        .antMatchers("/swagger-ui/**").authenticated()
+        .antMatchers("/swagger-ui/**").permitAll()
         .antMatchers(MERCHANT + "/**").authenticated()
         .antMatchers(CACHE_MANAGEMENT + "/**").authenticated()
         .antMatchers(AUTH + AUTH_LOGOUT + "/**").authenticated()

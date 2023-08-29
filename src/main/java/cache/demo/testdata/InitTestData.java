@@ -38,8 +38,13 @@ public class InitTestData {
   private static final String ANHO_VIEWER = "anhoviewer";
   private static final String ANHO_PASSWORD = "ocschos123";
 
+  private static final String USER_1 = "user1";
+  private static final String USER_2 = "user2";
+
   private static final String ROLE_VIEWER = "VIEWER";
   private static final String ROLE_EDIOR = "EDITOR";
+  private static final String ROLE_WATCHER = "WATCHER";
+
 
   private final RoleRepository roleRepository;
   private final UserRepository userRepository;
@@ -74,6 +79,11 @@ public class InitTestData {
           .codeName(ROLE_EDIOR)
           .name("Role Edior")
           .description("Can edit any data.")
+          .build(),
+      RoleEntity.builder()
+          .codeName(ROLE_WATCHER)
+          .name("Role Watcher")
+          .description("Same as role Viewer, just different name.")
           .build()
   );
 
@@ -97,6 +107,14 @@ public class InitTestData {
         UserEntity.builder()
             .userId(ANHO_VIEWER)
             .userPassword(passwordEncoder.encode(ANHO_PASSWORD))
+            .build(),
+        UserEntity.builder()
+            .userId(USER_1)
+            .userPassword(passwordEncoder.encode(USER_1))
+            .build(),
+        UserEntity.builder()
+            .userId(USER_2)
+            .userPassword(passwordEncoder.encode(USER_2))
             .build()
     );
 
@@ -138,6 +156,18 @@ public class InitTestData {
             .roleId(savedRoleEntitiesMap.get(ROLE_VIEWER).getId())
             .build();
         userRoleRepository.save(userRoleEntity);
+      }
+
+      if (userEntity.getUserId().equals(USER_1) || userEntity.getUserId().equals(USER_2)) {
+        UserRoleEntity userRoleEntity1 = UserRoleEntity.builder()
+            .userId(userEntity.getId())
+            .roleId(savedRoleEntitiesMap.get(ROLE_VIEWER).getId())
+            .build();
+        UserRoleEntity userRoleEntity2 = UserRoleEntity.builder()
+            .userId(userEntity.getId())
+            .roleId(savedRoleEntitiesMap.get(ROLE_WATCHER).getId())
+            .build();
+        userRoleRepository.saveAll(List.of(userRoleEntity1, userRoleEntity2));
       }
 
     }
